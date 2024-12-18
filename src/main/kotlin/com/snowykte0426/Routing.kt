@@ -40,10 +40,10 @@ fun Application.configureRouting() {
                 val currentFreqsGhz = processor.currentFreq.map { it / 1_000_000_000.0 }
                 val diskStores = hardware.diskStores
 
-                // 개발자 정보 및 Repo URL
-                val developerName = "Your Name"
+                val developerName = "snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
-                val qrCodeUrl = "https://github.com/8G4B/HW-Sence/blob/main/src/main/resources/static/image/repo_qr.png"
+                // Raw 이미지 URL 사용
+                val qrCodeUrl = "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
 
                 call.respondHtml {
                     head {
@@ -117,11 +117,40 @@ fun Application.configureRouting() {
                         footer .qr-container {
                             margin-top: 10px;
                         }
+
+                        .refresh-container {
+                            display: flex;
+                            justify-content: center;
+                            margin-top: 20px;
+                        }
+
+                        .refresh-button {
+                            background-color: #4CAF50;
+                            color: white;
+                            padding: 10px 20px;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            transition: background-color 0.3s ease;
+                        }
+
+                        .refresh-button:hover {
+                            background-color: #45a049;
+                        }
                         """
                         }
                         script(src = "https://cdn.jsdelivr.net/npm/chart.js") {}
                     }
                     body {
+                        // 새로고침 버튼
+                        div("refresh-container") {
+                            button(classes = "refresh-button", type = ButtonType.button) {
+                                +"Refresh"
+                                onClick = "location.reload();"
+                            }
+                        }
+
                         h1 { +"System Status" }
 
                         h2 { +"CPU & Memory Usage" }
