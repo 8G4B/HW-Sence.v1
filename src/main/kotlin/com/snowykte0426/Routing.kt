@@ -19,50 +19,48 @@ fun Application.configureRouting() {
                 val p = hw.processor
                 val prevTicks = p.systemCpuLoadTicks
                 Thread.sleep(1000)
-                val cpuLoad = p.getSystemCpuLoadBetweenTicks(prevTicks) * 100.0
+                val cpuLoad = p.getSystemCpuLoadBetweenTicks(prevTicks)*100.0
                 val prevProcTicks = p.processorCpuLoadTicks
                 Thread.sleep(1000)
-                val coreLoads = p.getProcessorCpuLoadBetweenTicks(prevProcTicks).map { it * 100 }
+                val coreLoads = p.getProcessorCpuLoadBetweenTicks(prevProcTicks).map{it*100}
                 val mem = hw.memory
                 val memUsed = mem.total - mem.available
-                val memPercent = (memUsed.toDouble() / mem.total) * 100.0
+                val memPercent = (memUsed.toDouble()/mem.total)*100.0
                 val os = si.operatingSystem
-                val pc = 5
-                val topMemProcesses = os.processes.sortedByDescending { it.residentSetSize }.take(pc)
-                    .map { it.name to it.residentSetSize }
-                val pn = topMemProcesses.map { it.first }
-                val pv = topMemProcesses.map { it.second.toDouble() / (1024 * 1024) }
-                val pnJson = pn.joinToString(prefix = "[", postfix = "]") { "\"$it\"" }
-                val pvJson = pv.joinToString(prefix = "[", postfix = "]")
+                val pc=5
+                val topMemProcesses = os.processes.sortedByDescending{it.residentSetSize}.take(pc).map{it.name to it.residentSetSize}
+                val pn = topMemProcesses.map{it.first}
+                val pv = topMemProcesses.map{it.second.toDouble()/(1024*1024)}
+                val pnJson = pn.joinToString(prefix="[",postfix="]"){ "\"$it\"" }
+                val pvJson = pv.joinToString(prefix="[",postfix="]")
                 val s = hw.sensors
                 val t = s.cpuTemperature
                 val v = s.cpuVoltage
                 val maxHz = p.maxFreq
-                val maxGhz = maxHz / 1_000_000_000.0
-                val freqs = p.currentFreq.map { it / 1_000_000_000.0 }
+                val maxGhz = maxHz/1_000_000_000.0
+                val freqs = p.currentFreq.map{it/1_000_000_000.0}
                 val upSec = os.systemUptime.toLong()
-                val upH = upSec / 3600
-                val upM = (upSec % 3600) / 60
+                val upH=upSec/3600
+                val upM=(upSec%3600)/60
                 val upStr = "${upH}h ${upM}m"
                 val la = p.getSystemLoadAverage(3)
-                val l1 = la.getOrElse(0) { Double.NaN }
-                val l5 = la.getOrElse(1) { Double.NaN }
-                val l15 = la.getOrElse(2) { Double.NaN }
+                val l1 = la.getOrElse(0){Double.NaN}
+                val l5 = la.getOrElse(1){Double.NaN}
+                val l15 = la.getOrElse(2){Double.NaN}
                 val disks = hw.diskStores
                 val devName = "snowykte0426"
                 val devUrl = "https://www.github.com/snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
-                val qrUrl =
-                    "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
+                val qrUrl = "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
                 val now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
                 val containerId = System.getenv("HOSTNAME") ?: "Unknown"
                 val memLimitFile = File("/sys/fs/cgroup/memory/memory.limit_in_bytes")
-                val dockerMemLimit = if (memLimitFile.exists()) {
+                val dockerMemLimit = if(memLimitFile.exists()) {
                     val limitStr = memLimitFile.readText().trim()
-                    if (limitStr == "max" || limitStr.toLongOrNull() == null) "N/A"
+                    if(limitStr == "max" || limitStr.toLongOrNull() == null) "N/A"
                     else {
                         val bytes = limitStr.toLong()
-                        val gb = bytes / (1024.0 * 1024.0 * 1024.0)
+                        val gb = bytes/(1024.0*1024.0*1024.0)
                         "%.2f GB".format(gb)
                     }
                 } else "N/A"
@@ -81,6 +79,7 @@ body {
     flex-direction:column;
     min-height:100vh;
     opacity:0;animation:fadeInUp 1s ease forwards;
+    color:#333;
 }
 .dark-mode {
     background:#222;
@@ -90,12 +89,18 @@ body {
     background:#333;
     color:#eee;
 }
+.dark-mode table {
+    background:#444;
+}
 .dark-mode table th {
     background:#4CAF50;
     color:#fff;
 }
 .dark-mode table td, .dark-mode table th {
     color:#eee;
+}
+.dark-mode tr:hover {
+    background:#555;
 }
 .dark-mode .refresh-button, .dark-mode .dark-mode-button {
     background:#4CAF50;
@@ -144,6 +149,7 @@ table {
     box-sizing:border-box;
     word-wrap:break-word;
     table-layout:auto;
+    color:#333;
 }
 th,td {
     border-bottom:1px solid #eee;
@@ -151,6 +157,7 @@ th,td {
     text-align:center;
     font-size:14px;
     white-space: normal;
+    color:#333;
 }
 th {
     background:#4CAF50;
@@ -230,6 +237,7 @@ a:hover {
     flex-direction:column;
     box-sizing:border-box;
     overflow:auto;
+    color:#333;
 }
 .panel h2 {
     margin-top:0;
@@ -243,16 +251,16 @@ a:hover {
 }
 """
                         }
-                        script(src = "https://cdn.jsdelivr.net/npm/chart.js") {}
+                        script(src="https://cdn.jsdelivr.net/npm/chart.js"){}
                     }
                     body {
                         div("refresh-container") {
-                            button(type = ButtonType.button, classes = "refresh-button") {
-                                attributes["onclick"] = "location.reload();"
+                            button(type=ButtonType.button,classes="refresh-button") {
+                                attributes["onclick"]="location.reload();"
                                 +"Refresh"
                             }
-                            button(type = ButtonType.button, classes = "dark-mode-button") {
-                                attributes["onclick"] = "document.body.classList.toggle('dark-mode');"
+                            button(type=ButtonType.button,classes="dark-mode-button") {
+                                attributes["onclick"]="document.body.classList.toggle('dark-mode');"
                                 +"Dark Mode"
                             }
                         }
@@ -261,17 +269,17 @@ a:hover {
                         div("dashboard") {
                             div("panel") {
                                 h2 {
-                                    attributes["title"] = "Overall CPU and Memory usage metrics"
+                                    attributes["title"]="Overall CPU and Memory usage metrics"
                                     +"CPU & Memory Usage"
                                 }
                                 table {
                                     tr {
                                         th {
-                                            attributes["title"] = "Name of the metric"
+                                            attributes["title"]="Name of the metric"
                                             +"Metric"
                                         }
                                         th {
-                                            attributes["title"] = "Current measured value"
+                                            attributes["title"]="Current measured value"
                                             +"Value"
                                         }
                                     }
@@ -284,137 +292,134 @@ a:hover {
                                         td { "%.2f%%".format(memPercent) }
                                     }
                                 }
-                                canvas { id = "cpuGauge"; width = "250"; height = "250" }
+                                canvas { id="cpuGauge"; width="250"; height="250" }
                             }
                             div("panel") {
                                 h2 {
-                                    attributes["title"] = "CPU usage per logical core"
+                                    attributes["title"]="CPU usage per logical core"
                                     +"Per-Core CPU Usage"
                                 }
                                 table {
                                     tr {
                                         th {
-                                            attributes["title"] = "Logical core number"
+                                            attributes["title"]="Logical core number"
                                             +"Core Index"
                                         }
                                         th {
-                                            attributes["title"] = "CPU usage on this core"
+                                            attributes["title"]="CPU usage on this core"
                                             +"Usage (%)"
                                         }
                                     }
-                                    coreLoads.forEachIndexed { i, l -> tr { td { "Core $i" };td { "%.2f%%".format(l) } } }
+                                    coreLoads.forEachIndexed {i,l->tr{td{"Core $i"};td{"%.2f%%".format(l)}}}
                                 }
                             }
                             div("panel") {
                                 h2 {
-                                    attributes["title"] = "Various CPU and hardware-related metrics"
+                                    attributes["title"]="Various CPU and hardware-related metrics"
                                     +"CPU & Hardware Info"
                                 }
                                 table {
                                     tr {
                                         th {
-                                            attributes["title"] = "Metric name"
+                                            attributes["title"]="Metric name"
                                             +"Item"
                                         }
                                         th {
-                                            attributes["title"] = "Measured value"
+                                            attributes["title"]="Measured value"
                                             +"Value"
                                         }
                                     }
                                     tr {
-                                        td { +"CPU Temperature" }
-                                        td { "%.2f °C".format(t) }
+                                        td {+"CPU Temperature"}
+                                        td {"%.2f °C".format(t)}
                                     }
                                     tr {
-                                        td { +"CPU Voltage" }
-                                        td { "$v V" }
+                                        td {+"CPU Voltage"}
+                                        td {"$v V"}
                                     }
                                     tr {
-                                        td { +"Max CPU Frequency" }
-                                        td { "%.2f GHz".format(maxGhz) }
+                                        td {+"Max CPU Frequency"}
+                                        td {"%.2f GHz".format(maxGhz)}
                                     }
-                                    freqs.forEachIndexed { i, f ->
-                                        tr {
-                                            td { "Core $i Frequency" };td {
-                                            "%.2f GHz".format(
-                                                f
-                                            )
-                                        }
-                                        }
-                                    }
+                                    freqs.forEachIndexed{i,f->tr{td{"Core $i Frequency"};td{"%.2f GHz".format(f)}}}
                                     tr {
                                         td {
-                                            attributes["title"] = "Time since the system started"
+                                            attributes["title"]="Time since the system started"
                                             +"System Uptime"
                                         }
-                                        td { +upStr }
+                                        td {+upStr}
                                     }
                                     tr {
                                         td {
-                                            attributes["title"] = "Average load over last 1,5,15 minutes"
+                                            attributes["title"]="Average load over last 1,5,15 minutes"
                                             +"Load Average (1/5/15min)"
                                         }
-                                        td { "${l1.roundToInt()} / ${l5.roundToInt()} / ${l15.roundToInt()}" }
+                                        td {"${l1.roundToInt()} / ${l5.roundToInt()} / ${l15.roundToInt()}"}
                                     }
                                 }
                             }
                             div("panel") {
                                 h2 {
-                                    attributes["title"] = "Top $pc memory consuming processes"
+                                    attributes["title"]="Top $pc memory consuming processes"
                                     +"Top $pc Memory-Consuming Processes"
                                 }
-                                canvas { id = "memChart"; width = "600"; height = "400" }
+                                canvas { id="memChart"; width="600"; height="400" }
                             }
                             div("panel") {
                                 h2 {
-                                    attributes["title"] = "Information about disk storage"
+                                    attributes["title"]="Information about disk storage"
                                     +"Disk Information"
                                 }
                                 table {
                                     tr {
                                         th {
-                                            attributes["title"] = "Disk name"
+                                            attributes["title"]="Disk name"
                                             +"Name"
                                         }
                                         th {
-                                            attributes["title"] = "Disk model"
+                                            attributes["title"]="Disk model"
                                             +"Model"
                                         }
                                         th {
-                                            attributes["title"] = "Disk serial number"
+                                            attributes["title"]="Disk serial number"
                                             +"Serial"
                                         }
                                         th {
-                                            attributes["title"] = "Disk size in GB"
+                                            attributes["title"]="Disk size in GB"
                                             +"Size(GB)"
                                         }
                                     }
-                                    disks.forEach { d ->
+                                    disks.forEach{d->
+                                        val diskName = d.name.ifBlank { "/dev/vda" }
+                                        val diskModel = if(d.model.isBlank()) "unknown" else d.model
+                                        val diskSerial = d.serial ?: "unknown"
+                                        val diskSizeGB = if(d.size > 0) "%.2f".format(d.size/(1024.0*1024.0*1024.0)) else "unknown"
                                         tr {
-                                            td { +d.name };td { +d.model };td {
-                                            +(d.serial ?: "")
-                                        };td { "%.2f".format(d.size / (1024.0 * 1024.0 * 1024.0)) }
+                                            td { +diskName }
+                                            td { +diskModel }
+                                            td { +diskSerial }
+                                            td { +diskSizeGB }
                                         }
                                     }
                                 }
                             }
                             div("panel") {
                                 h2 {
-                                    attributes["title"] = "Docker environment metrics"
+                                    attributes["title"]="Docker environment metrics"
                                     +"Docker Environment"
                                 }
                                 table {
                                     tr {
-                                        th { +"Item" }
-                                        th { +"Value" }
+                                        th {+"Item"}
+                                        th {+"Value"}
                                     }
                                     tr {
-                                        td { +"Container HOSTNAME" }
-                                        td { +containerId }
+                                        td {+"Container HOSTNAME"}
+                                        td {+containerId}
                                     }
                                     tr {
-                                        td { +"CGroup Memory Limit" }
-                                        td { +dockerMemLimit }
+                                        td {+"CGroup Memory Limit"}
+                                        td {+dockerMemLimit}
                                     }
                                 }
                             }
@@ -428,7 +433,7 @@ new Chart(cpuCtx,{
   data:{
     labels:['Used','Free'],
     datasets:[{
-      data:[${cpuLoad},${100.0 - cpuLoad}],
+      data:[${cpuLoad},${100.0-cpuLoad}],
       backgroundColor:['rgba(255,99,132,0.7)','rgba(201,203,207,0.3)'],
       borderColor:['#fff','#fff'],
       borderWidth:1
@@ -469,14 +474,14 @@ new Chart(memCtx,{
                         footer {
                             p {
                                 +"Developed by "
-                                a(href = devUrl, target = "_blank") { +devName }
+                                a(href=devUrl,target="_blank"){+devName}
                             }
                             p { +"GitHub Repository:" }
                             div("qr-container") {
-                                img(src = qrUrl, alt = "QR Code for Repository") { style = "width:120px;height:120px;" }
+                                img(src=qrUrl,alt="QR Code for Repository"){style="width:120px;height:120px;"}
                             }
                             p {
-                                a(href = repoUrl, target = "_blank") { +repoUrl }
+                                a(href=repoUrl,target="_blank"){+repoUrl}
                             }
                         }
                     }
