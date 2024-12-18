@@ -69,6 +69,7 @@ fun Application.configureRouting() {
                 val devName = "snowykte0426"
                 val devUrl = "https://www.github.com/snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
+                val releasesUrl = "https://github.com/8G4B/HW-Sence.v1/releases/tag/v1.1.2"
                 val qrUrl =
                     "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
                 val now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
@@ -129,7 +130,6 @@ body {
     color:#666;
 }
 
-/* Responsive grid layout */
 .dashboard {
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
@@ -170,7 +170,6 @@ h2 {
     box-sizing:border-box;
 }
 
-/* Table fully responsive and takes width */
 table {
     width:100%;
     margin:20px 0;
@@ -211,14 +210,12 @@ canvas {
     box-sizing:border-box;
 }
 
-/* Make disk table scrollable horizontally */
 .disk-scroll-wrapper {
     overflow-x:auto;
     width:100%;
     box-sizing:border-box;
 }
 
-/* Dark mode */
 .dark-mode {
     background:#222;
     color:#eee !important;
@@ -303,7 +300,11 @@ a:hover {
                     }
                     body {
                         h1 { +"HW-Sence" }
-                        h3 { +"v.1.1.2" }
+                        h3 {
+                            a(href = releasesUrl, target = "_blank") {
+                                +"v1.1.2"
+                            }
+                        }
                         p("now-time") {
                             style = "text-align:center; margin-bottom:20px;"
                             +"$dateNow $now"
