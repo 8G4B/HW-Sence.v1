@@ -42,7 +42,6 @@ fun Application.configureRouting() {
 
                 val developerName = "snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
-                // Raw 이미지 URL 사용
                 val qrCodeUrl = "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
 
                 call.respondHtml {
@@ -143,11 +142,10 @@ fun Application.configureRouting() {
                         script(src = "https://cdn.jsdelivr.net/npm/chart.js") {}
                     }
                     body {
-                        // 새로고침 버튼
                         div("refresh-container") {
-                            button(classes = "refresh-button", type = ButtonType.button) {
+                            button(type = ButtonType.button, classes = "refresh-button") {
+                                attributes["onclick"] = "location.reload();"
                                 +"Refresh"
-                                onClick = "location.reload();"
                             }
                         }
 
