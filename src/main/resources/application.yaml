@@ -1,0 +1,7 @@
+ktor:
+  application:
+    modules:
+      - com.snowykte0426.ApplicationKt.module
+  deployment:
+    port: 18029
+    host: "0.0.0.0"
