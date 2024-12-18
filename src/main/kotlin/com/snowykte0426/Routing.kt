@@ -81,25 +81,32 @@ body {
     flex-direction:column;
     min-height:100vh;
     opacity:0;animation:fadeInUp 1s ease forwards;
+    color:#000 !important;
 }
 .dark-mode {
     background:#222;
-    color:#eee;
+    color:#eee !important;
 }
 .dark-mode .panel {
-    background:#333;
-    color:#eee;
+    background:#333 !important;
+    color:#eee !important;
+}
+.dark-mode table {
+    background:#444 !important;
 }
 .dark-mode table th {
-    background:#4CAF50;
-    color:#fff;
+    background:#4CAF50 !important;
+    color:#fff !important;
 }
 .dark-mode table td, .dark-mode table th {
-    color:#eee;
+    color:#eee !important;
+}
+.dark-mode tr:hover {
+    background:#555 !important;
 }
 .dark-mode .refresh-button, .dark-mode .dark-mode-button {
-    background:#4CAF50;
-    color:#fff;
+    background:#4CAF50 !important;
+    color:#fff !important;
 }
 h1,h2,h3,table,canvas,footer,.refresh-container,.last-updated,.dashboard {
     opacity:0;animation:fadeInUp 0.8s ease forwards;
@@ -109,12 +116,15 @@ h1,h2,h3,table,canvas,footer,.refresh-container,.last-updated,.dashboard {
 }
 h1 {
     animation-delay:0.2s;
+    color:#000 !important;
 }
 .last-updated {
     animation-delay:0.3s;
+    color:#666 !important;
 }
 h2 {
     animation-delay:0.4s;
+    color:#000 !important;
 }
 .dashboard {
     animation-delay:0.5s;
@@ -124,9 +134,11 @@ canvas {
 }
 footer {
     animation-delay:1.0s;
+    color:#555 !important;
 }
 h3 {
     animation-delay:0.5s;
+    color:#555 !important;
 }
 canvas {
     max-width:300px;
@@ -144,6 +156,7 @@ table {
     box-sizing:border-box;
     word-wrap:break-word;
     table-layout:auto;
+    color:#000 !important;
 }
 th,td {
     border-bottom:1px solid #eee;
@@ -151,27 +164,21 @@ th,td {
     text-align:center;
     font-size:14px;
     white-space: normal;
+    color:#000 !important;
 }
 th {
-    background:#4CAF50;
-    color:#fff;
+    background:#4CAF50 !important;
+    color:#fff !important;
     font-weight:600;
 }
 tr:hover {
-    background:#f7f7f7;
-}
-h3 {
-    text-align:center;
-    font-weight:500;
-    margin:20px 0 10px 0;
-    color:#555;
+    background:#f7f7f7 !important;
 }
 footer {
     margin-top:auto;
     text-align:center;
     padding:20px;
     font-size:14px;
-    color:#555;
     background:#f0f2f5;
     border-top:1px solid #ddd;
 }
@@ -192,8 +199,8 @@ a:hover {
     gap:10px;
 }
 .refresh-button,.dark-mode-button {
-    background:#4CAF50;
-    color:#fff;
+    background:#4CAF50 !important;
+    color:#fff !important;
     padding:10px 20px;
     border:none;
     border-radius:5px;
@@ -202,13 +209,12 @@ a:hover {
     transition:background-color 0.3s ease;
 }
 .refresh-button:hover,.dark-mode-button:hover {
-    background:#45a049;
+    background:#45a049 !important;
 }
 .last-updated {
     text-align:center;
     margin-top:10px;
     font-size:14px;
-    color:#666;
 }
 .dashboard {
     display:flex;
@@ -220,7 +226,7 @@ a:hover {
     box-sizing:border-box;
 }
 .panel {
-    background:#fff;
+    background:#fff !important;
     box-shadow:0 2px 8px rgba(0,0,0,0.1);
     border-radius:5px;
     padding:20px;
@@ -230,16 +236,18 @@ a:hover {
     flex-direction:column;
     box-sizing:border-box;
     overflow:auto;
+    color:#000 !important;
 }
 .panel h2 {
     margin-top:0;
     margin-bottom:20px;
     font-size:18px;
-    color:#333;
     text-align:center;
+    color:#000 !important;
 }
 .panel h3 {
     margin-top:0;
+    color:#000 !important;
 }
 """
                         }
@@ -277,11 +285,11 @@ a:hover {
                                     }
                                     tr {
                                         td { +"Total CPU Usage" }
-                                        td { "%.2f%%".format(cpuLoad) }
+                                        td { +"%.2f%%".format(cpuLoad) }
                                     }
                                     tr {
                                         td { +"Memory Usage" }
-                                        td { "%.2f%%".format(memPercent) }
+                                        td { +"%.2f%%".format(memPercent) }
                                     }
                                 }
                                 canvas { id = "cpuGauge"; width = "250"; height = "250" }
@@ -390,10 +398,16 @@ a:hover {
                                         }
                                     }
                                     disks.forEach { d ->
+                                        val diskName = if (d.name.isBlank()) "/dev/vda" else d.name
+                                        val diskModel = if (d.model.isBlank()) "unknown" else d.model
+                                        val diskSerial = if (d.serial.isNullOrBlank()) "unknown" else d.serial!!
+                                        val diskSizeGB =
+                                            if (d.size > 0) "%.2f".format(d.size / (1024.0 * 1024.0 * 1024.0)) else "unknown"
                                         tr {
-                                            td { +d.name };td { +d.model };td {
-                                            +(d.serial ?: "")
-                                        };td { "%.2f".format(d.size / (1024.0 * 1024.0 * 1024.0)) }
+                                            td { +diskName }
+                                            td { +diskModel }
+                                            td { +diskSerial }
+                                            td { +diskSizeGB }
                                         }
                                     }
                                 }
