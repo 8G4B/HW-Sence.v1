@@ -5,6 +5,8 @@ import io.ktor.server.html.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
 import oshi.SystemInfo
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 fun Application.configureRouting() {
     routing {
@@ -32,18 +34,22 @@ fun Application.configureRouting() {
                 val processMemValues = topMemProcesses.map { it.second.toDouble() / (1024 * 1024) }
                 val processNamesJson = processNames.joinToString(prefix = "[", postfix = "]") { "\"$it\"" }
                 val processMemValuesJson = processMemValues.joinToString(prefix = "[", postfix = "]")
+
                 val sensors = hardware.sensors
                 val cpuTemperature = sensors.cpuTemperature
                 val cpuVoltage = sensors.cpuVoltage
                 val maxFreqHz = processor.maxFreq
                 val maxFreqGhz = maxFreqHz / 1_000_000_000.0
                 val currentFreqsGhz = processor.currentFreq.map { it / 1_000_000_000.0 }
+
                 val diskStores = hardware.diskStores
 
                 val developerName = "snowykte0426"
                 val developerUrl = "https://www.github.com/snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
                 val qrCodeUrl = "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
+
+                val currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 
                 call.respondHtml {
                     head {
@@ -72,19 +78,26 @@ fun Application.configureRouting() {
                             animation: fadeInUp 1s ease forwards;
                         }
 
-                        h1, h2, h3, table, canvas, footer, .refresh-container {
+                        .dark-mode {
+                            background-color: #222;
+                            color: #eee;
+                        }
+
+                        h1, h2, h3, table, canvas, footer, .refresh-container, .last-updated {
                             opacity: 0;
                             animation: fadeInUp 0.8s ease forwards;
                         }
 
-                        /* 순차적 애니메이션을 위해 딜레이 적용 */
+                        .refresh-container {
+                            animation-delay: 0.4s;
+                        }
                         h1 {
                             animation-delay: 0.2s;
                         }
-                        h2 {
-                            animation-delay: 0.4s;
+                        .last-updated {
+                            animation-delay: 0.3s;
                         }
-                        .refresh-container {
+                        h2 {
                             animation-delay: 0.4s;
                         }
                         table {
@@ -95,6 +108,9 @@ fun Application.configureRouting() {
                         }
                         footer {
                             animation-delay: 1.0s;
+                        }
+                        h3 {
+                            animation-delay: 0.5s;
                         }
 
                         canvas {
@@ -135,7 +151,6 @@ fun Application.configureRouting() {
                             font-weight: 500;
                             margin: 30px 0 10px 0;
                             color: #555;
-                            animation-delay: 0.5s;
                         }
 
                         footer {
@@ -165,9 +180,10 @@ fun Application.configureRouting() {
                             display: flex;
                             justify-content: center;
                             margin-top: 20px;
+                            gap: 10px;
                         }
 
-                        .refresh-button {
+                        .refresh-button, .dark-mode-button {
                             background-color: #4CAF50;
                             color: white;
                             padding: 10px 20px;
@@ -178,8 +194,15 @@ fun Application.configureRouting() {
                             transition: background-color 0.3s ease;
                         }
 
-                        .refresh-button:hover {
+                        .refresh-button:hover, .dark-mode-button:hover {
                             background-color: #45a049;
+                        }
+
+                        .last-updated {
+                            text-align: center;
+                            margin-top: 10px;
+                            font-size: 14px;
+                            color: #666;
                         }
                         """
                         }
@@ -191,9 +214,17 @@ fun Application.configureRouting() {
                                 attributes["onclick"] = "location.reload();"
                                 +"Refresh"
                             }
+                            button(type = ButtonType.button, classes = "dark-mode-button") {
+                                attributes["onclick"] = "document.body.classList.toggle('dark-mode');"
+                                +"Dark Mode"
+                            }
                         }
 
                         h1 { +"System Status" }
+
+                        div("last-updated") {
+                            +"Last updated: $currentTime"
+                        }
 
                         h2 { +"CPU & Memory Usage" }
                         table {
