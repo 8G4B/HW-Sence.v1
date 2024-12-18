@@ -26,12 +26,13 @@ fun Application.configureRouting() {
 
                 val mem = hw.memory
                 val memUsed = mem.total - mem.available
-                val memPercent = if (mem.total > 0) (memUsed.toDouble()/mem.total)*100.0 else Double.NaN
+                val memPercent = if (mem.total > 0) (memUsed.toDouble() / mem.total) * 100.0 else Double.NaN
 
                 val prevProcTicks = p.processorCpuLoadTicks
                 Thread.sleep(1000)
                 val coreLoadValues = p.getProcessorCpuLoadBetweenTicks(prevProcTicks)
-                val coreLoads = if (coreLoadValues.any { it.isNaN() }) emptyList<Double>() else coreLoadValues.map { it * 100 }
+                val coreLoads =
+                    if (coreLoadValues.any { it.isNaN() }) emptyList<Double>() else coreLoadValues.map { it * 100 }
 
                 val os = si.operatingSystem
                 val pc = 5
@@ -40,7 +41,7 @@ fun Application.configureRouting() {
                     if (processes.isEmpty()) emptyList<Pair<String, Long>>() else processes.sortedByDescending { it.residentSetSize }
                         .take(pc).map { it.name to it.residentSetSize }
                 val pn = topMemProcesses.map { it.first }
-                val pv = topMemProcesses.map { it.second.toDouble()/(1024*1024) }
+                val pv = topMemProcesses.map { it.second.toDouble() / (1024 * 1024) }
                 val pnJson = pn.joinToString(prefix = "[", postfix = "]") { "\"$it\"" }
                 val pvJson = pv.joinToString(prefix = "[", postfix = "]")
 
@@ -48,52 +49,53 @@ fun Application.configureRouting() {
                 val t = if (s.cpuTemperature.isNaN()) Double.NaN else s.cpuTemperature
                 val v = if (s.cpuVoltage.isNaN()) Double.NaN else s.cpuVoltage
                 val maxHz = p.maxFreq
-                val maxGhz = if (maxHz > 0) maxHz/1_000_000_000.0 else Double.NaN
+                val maxGhz = if (maxHz > 0) maxHz / 1_000_000_000.0 else Double.NaN
                 val freqs = p.currentFreq
-                val coreFreqGhz = if (freqs.isEmpty()) emptyList<Double>() else freqs.map { if (it > 0) it/1_000_000_000.0 else Double.NaN }
+                val coreFreqGhz =
+                    if (freqs.isEmpty()) emptyList<Double>() else freqs.map { if (it > 0) it / 1_000_000_000.0 else Double.NaN }
 
                 val upSec = os.systemUptime.toLong()
-                val upH=upSec/3600
-                val upM=(upSec%3600)/60
+                val upH = upSec / 3600
+                val upM = (upSec % 3600) / 60
                 val upStr = if (upSec > 0) "${upH}h ${upM}m" else "N/A"
 
                 val la = p.getSystemLoadAverage(3)
-                val l1 = la.getOrElse(0){Double.NaN}
-                val l5 = la.getOrElse(1){Double.NaN}
-                val l15 = la.getOrElse(2){Double.NaN}
+                val l1 = la.getOrElse(0) { Double.NaN }
+                val l5 = la.getOrElse(1) { Double.NaN }
+                val l15 = la.getOrElse(2) { Double.NaN }
 
                 val disks = hw.diskStores
 
                 val devName = "snowykte0426"
                 val devUrl = "https://www.github.com/snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
-                val qrUrl = "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
+                val qrUrl =
+                    "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
                 val now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
                 val dateNow = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                 val containerId = System.getenv("HOSTNAME") ?: "Unknown"
 
                 val memLimitFile = File("/sys/fs/cgroup/memory/memory.limit_in_bytes")
-                val dockerMemLimit = if(memLimitFile.exists()){
+                val dockerMemLimit = if (memLimitFile.exists()) {
                     val limitStr = memLimitFile.readText().trim()
-                    if(limitStr=="max"||limitStr.toLongOrNull()==null) "N/A" else {
+                    if (limitStr == "max" || limitStr.toLongOrNull() == null) "N/A" else {
                         val bytes = limitStr.toLong()
-                        "%.2f GB".format(bytes/(1024.0*1024.0*1024.0))
+                        "%.2f GB".format(bytes / (1024.0 * 1024.0 * 1024.0))
                     }
                 } else "N/A"
 
-                fun coreRows(coreLoads:List<Double>):List<Pair<String,String>> {
-                    return if(coreLoads.isEmpty()){
-                        List(3){"N/A" to "N/A"}
-                    }else{
-                        if(coreLoads.size<3){
-                            coreLoads.mapIndexed { i,l-> "Core $i" to (if(l.isNaN()) "N/A" else "%.2f%%".format(l)) } +
-                                    List(3-coreLoads.size){"N/A" to "N/A"}
-                        }else {
-                            coreLoads.mapIndexed { i,l-> "Core $i" to (if(l.isNaN()) "N/A" else "%.2f%%".format(l)) }
+                fun coreRows(coreLoads: List<Double>): List<Pair<String, String>> {
+                    return if (coreLoads.isEmpty()) {
+                        List(3) { "N/A" to "N/A" }
+                    } else {
+                        if (coreLoads.size < 3) {
+                            coreLoads.mapIndexed { i, l -> "Core $i" to (if (l.isNaN()) "N/A" else "%.2f%%".format(l)) } +
+                                    List(3 - coreLoads.size) { "N/A" to "N/A" }
+                        } else {
+                            coreLoads.mapIndexed { i, l -> "Core $i" to (if (l.isNaN()) "N/A" else "%.2f%%".format(l)) }
                         }
                     }
                 }
-
                 call.respondHtml {
                     head {
                         title("HW-Sence | System Status")
@@ -297,25 +299,25 @@ a:hover {
 }
 """
                         }
-                        script(src="https://cdn.jsdelivr.net/npm/chart.js") {}
+                        script(src = "https://cdn.jsdelivr.net/npm/chart.js") {}
                     }
                     body {
                         h1 { +"HW-Sence" }
                         h3 { +"v.1.1.2" }
                         p("now-time") {
-                            style="text-align:center; margin-bottom:20px;"
+                            style = "text-align:center; margin-bottom:20px;"
                             +"$dateNow $now"
                         }
 
                         h1 { +"System Status" }
 
                         div("refresh-container") {
-                            button(type=ButtonType.button, classes="refresh-button") {
-                                onClick="location.reload();"
+                            button(type = ButtonType.button, classes = "refresh-button") {
+                                onClick = "location.reload();"
                                 +"Refresh"
                             }
-                            button(type=ButtonType.button, classes="dark-mode-button") {
-                                onClick="document.body.classList.toggle('dark-mode');"
+                            button(type = ButtonType.button, classes = "dark-mode-button") {
+                                onClick = "document.body.classList.toggle('dark-mode');"
                                 +"Dark Mode"
                             }
                         }
@@ -324,21 +326,31 @@ a:hover {
                         div("dashboard") {
                             div("panel") {
                                 h2 {
-                                    title="Shows overall CPU and Memory usage"
+                                    title = "Shows overall CPU and Memory usage"
                                     +"CPU & Memory Usage"
                                 }
                                 table {
                                     tr {
-                                        th { title="Name of the metric";+"Metric" }
-                                        th { title="Current measured value";+"Value" }
+                                        th { title = "Name of the metric";+"Metric" }
+                                        th { title = "Current measured value";+"Value" }
                                     }
                                     tr {
-                                        td { title="Total CPU usage";+"Total CPU Usage"}
-                                        td { title="Percentage of CPU in use";if (cpuLoad.isNaN()) "N/A" else "%.2f%%".format(cpuLoad) }
+                                        td { title = "Total CPU usage";+"Total CPU Usage" }
+                                        td {
+                                            title =
+                                                "Percentage of CPU in use";+if (cpuLoad.isNaN()) "N/A" else "%.2f%%".format(
+                                            cpuLoad
+                                        )
+                                        }
                                     }
                                     tr {
-                                        td { title="Memory usage metric";+"Memory Usage"}
-                                        td { title="Percentage of memory in use";if (memPercent.isNaN()) "N/A" else "%.2f%%".format(memPercent) }
+                                        td { title = "Memory usage metric";+"Memory Usage" }
+                                        td {
+                                            title =
+                                                "Percentage of memory in use";+if (memPercent.isNaN()) "N/A" else "%.2f%%".format(
+                                            memPercent
+                                        ).toString()
+                                        }
                                     }
                                 }
                                 canvas {
@@ -350,26 +362,33 @@ a:hover {
                                 canvas {
                                     id = "memGauge"
                                     width = "200"; height = "200"
-                                    attributes["data-mem-used"] = if (memPercent.isNaN()) "0.0" else memPercent.toString()
+                                    attributes["data-mem-used"] =
+                                        if (memPercent.isNaN()) "0.0" else memPercent.toString()
                                     title = "Memory Usage Doughnut Chart"
                                 }
                             }
 
                             div("panel") {
                                 h2 {
-                                    title="Shows per-core CPU usage"
+                                    title = "Shows per-core CPU usage"
                                     +"Per-Core CPU Usage"
                                 }
                                 table {
                                     tr {
-                                        th { title="Logical core number";+"Core Index"}
-                                        th { title="CPU usage on this core";+"Usage (%)"}
+                                        th { title = "Logical core number";+"Core Index" }
+                                        th { title = "CPU usage on this core";+"Usage (%)" }
                                     }
-                                    val rows=coreRows(coreLoads)
-                                    rows.forEach{(coreName,usage)->
+                                    val rows = coreRows(coreLoads)
+                                    rows.forEach { (coreName, usage) ->
                                         tr {
-                                            td { title=if(coreName=="N/A")"No data" else "Core identifier";+coreName}
-                                            td { title=if(usage=="N/A")"No data" else "Core usage percentage";+usage}
+                                            td {
+                                                title =
+                                                    if (coreName == "N/A") "No data" else "Core identifier";+coreName
+                                            }
+                                            td {
+                                                title =
+                                                    if (usage == "N/A") "No data" else "Core usage percentage";+usage
+                                            }
                                         }
                                     }
                                 }
@@ -377,50 +396,68 @@ a:hover {
 
                             div("panel") {
                                 h2 {
-                                    title="Various CPU and hardware-related metrics"
+                                    title = "Various CPU and hardware-related metrics"
                                     +"CPU & Hardware Info"
                                 }
                                 table {
                                     tr {
-                                        th {title="Metric name";+"Item"}
-                                        th {title="Measured value";+"Value"}
+                                        th { title = "Metric name";+"Item" }
+                                        th { title = "Measured value";+"Value" }
                                     }
                                     tr {
-                                        td {title="CPU Temperature";+"CPU Temperature"}
-                                        td {title="Current CPU temperature in °C";if (t.isNaN()) "N/A" else "%.2f °C".format(t)}
+                                        td { title = "CPU Temperature";+"CPU Temperature" }
+                                        td {
+                                            title =
+                                                "Current CPU temperature in °C";+if (t.isNaN()) "N/A" else "%.2f °C".format(
+                                            t
+                                        )
+                                        }
                                     }
                                     tr {
-                                        td {title="CPU Voltage";+"CPU Voltage"}
-                                        td {title="Current CPU voltage";if (v.isNaN()) "N/A" else "%.2f V".format(v)}
+                                        td { title = "CPU Voltage";+"CPU Voltage" }
+                                        td {
+                                            title = "Current CPU voltage";+if (v.isNaN()) "N/A" else "%.2f V".format(v)
+                                        }
                                     }
                                     tr {
-                                        td {title="Max CPU Frequency";+"Max CPU Frequency"}
-                                        td {title="Maximum CPU frequency in GHz";if (maxGhz.isNaN()) "N/A" else "%.2f GHz".format(maxGhz)}
+                                        td { title = "Max CPU Frequency";+"Max CPU Frequency" }
+                                        td {
+                                            title =
+                                                "Maximum CPU frequency in GHz";+if (maxGhz.isNaN()) "N/A" else "%.2f GHz".format(
+                                            maxGhz
+                                        )
+                                        }
                                     }
                                     if (coreFreqGhz.isEmpty()) {
                                         tr {
-                                            td { title="Core frequencies data not available";+"Core Frequencies"}
-                                            td { title="N/A";+"N/A"}
+                                            td { title = "Core frequencies data not available";+"Core Frequencies" }
+                                            td { title = "N/A";+"N/A" }
                                         }
                                     } else {
-                                        coreFreqGhz.forEachIndexed{i,f->
+                                        coreFreqGhz.forEachIndexed { i, f ->
                                             tr {
-                                                td { title="Frequency of core $i";+"Core $i Frequency"}
-                                                td { title="Frequency in GHz";if (f.isNaN()) "N/A" else "%.2f GHz".format(f)}
+                                                td { title = "Frequency of core $i";+"Core $i Frequency" }
+                                                td {
+                                                    title =
+                                                        "Frequency in GHz";+if (f.isNaN()) "N/A" else "%.2f GHz".format(
+                                                    f
+                                                )
+                                                }
                                             }
                                         }
                                     }
                                     tr {
-                                        td {title="System uptime";+"System Uptime"}
-                                        td {title="Uptime in hours and minutes";+upStr}
+                                        td { title = "System uptime";+"System Uptime" }
+                                        td { title = "Uptime in hours and minutes";+upStr }
                                     }
                                     tr {
-                                        td {title="Load average";+"Load Average (1/5/15min)"}
-                                        td {title="System load average over 1,5,15 minutes"
+                                        td { title = "Load average";+"Load Average (1/5/15min)" }
+                                        td {
+                                            title = "System load average over 1,5,15 minutes"
                                             if (l1.isNaN() && l5.isNaN() && l15.isNaN()) {
                                                 +"N/A"
                                             } else {
-                                                "${if (l1.isNaN()) "N/A" else l1.roundToInt()} / ${if (l5.isNaN()) "N/A" else l5.roundToInt()} / ${if (l15.isNaN()) "N/A" else l15.roundToInt()}"
+                                                +"${if (l1.isNaN()) "N/A" else l1.roundToInt()} / ${if (l5.isNaN()) "N/A" else l5.roundToInt()} / ${if (l15.isNaN()) "N/A" else l15.roundToInt()}"
                                             }
                                         }
                                     }
@@ -428,63 +465,63 @@ a:hover {
                             }
 
                             div("panel") {
-                                h2 { title="Top memory consuming processes";+"Top $pc Memory-Consuming Processes"}
+                                h2 { title = "Top memory consuming processes";+"Top $pc Memory-Consuming Processes" }
                                 if (topMemProcesses.isEmpty()) {
                                     table {
                                         tr {
-                                            th { title="Process Name";+"Process"}
-                                            th { title="Memory(MB) used";+"Memory(MB)"}
+                                            th { title = "Process Name";+"Process" }
+                                            th { title = "Memory(MB) used";+"Memory(MB)" }
                                         }
                                         tr {
-                                            td { title="No process data";+"N/A"}
-                                            td { title="No process data";+"N/A"}
+                                            td { title = "No process data";+"N/A" }
+                                            td { title = "No process data";+"N/A" }
                                         }
                                     }
                                 } else {
                                     canvas {
-                                        id="memChart"
-                                        width="600"
-                                        height="400"
-                                        title="Memory Usage Bar Chart for Top Processes"
-                                        attributes["data-process-names"]=pnJson
-                                        attributes["data-process-values"]=pvJson
+                                        id = "memChart"
+                                        width = "600"
+                                        height = "400"
+                                        title = "Memory Usage Bar Chart for Top Processes"
+                                        attributes["data-process-names"] = pnJson
+                                        attributes["data-process-values"] = pvJson
                                     }
                                 }
                             }
 
                             div("panel") {
                                 h2 {
-                                    title="Information about disk storage"
+                                    title = "Information about disk storage"
                                     +"Disk Information"
                                 }
                                 div("disk-scroll-wrapper") {
                                     style = "overflow-x:auto;"
                                     table {
                                         tr {
-                                            th { title="Disk name";+"Name"}
-                                            th { title="Disk model";+"Model"}
-                                            th { title="Disk serial number";+"Serial"}
-                                            th { title="Disk size in GB";+"Size(GB)"}
+                                            th { title = "Disk name";+"Name" }
+                                            th { title = "Disk model";+"Model" }
+                                            th { title = "Disk serial number";+"Serial" }
+                                            th { title = "Disk size in GB";+"Size(GB)" }
                                         }
                                         if (disks.isEmpty()) {
                                             tr {
-                                                td {title="No disk data";+"N/A"}
-                                                td {title="No disk data";+"N/A"}
-                                                td {title="No disk data";+"N/A"}
-                                                td {title="No disk data";+"N/A"}
+                                                td { title = "No disk data";+"N/A" }
+                                                td { title = "No disk data";+"N/A" }
+                                                td { title = "No disk data";+"N/A" }
+                                                td { title = "No disk data";+"N/A" }
                                             }
                                         } else {
                                             disks.forEach { d ->
-                                                val diskName = if(d.name.isBlank()) "N/A" else d.name
-                                                val diskModel = if(d.model.isBlank()) "N/A" else d.model
-                                                val diskSerial = if(d.serial.isNullOrBlank()) "N/A" else d.serial!!
+                                                val diskName = if (d.name.isBlank()) "N/A" else d.name
+                                                val diskModel = if (d.model.isBlank()) "N/A" else d.model
+                                                val diskSerial = if (d.serial.isNullOrBlank()) "N/A" else d.serial!!
                                                 val diskSizeGB =
-                                                    if (d.size>0)"%.2f".format(d.size/(1024.0*1024.0*1024.0)) else "N/A"
+                                                    if (d.size > 0) "%.2f".format(d.size / (1024.0 * 1024.0 * 1024.0)) else "N/A"
                                                 tr {
-                                                    td { title="Disk name";+diskName }
-                                                    td { title="Disk model";+diskModel }
-                                                    td { title="Disk serial";+diskSerial }
-                                                    td { title="Disk size in GB";+diskSizeGB }
+                                                    td { title = "Disk name";+diskName }
+                                                    td { title = "Disk model";+diskModel }
+                                                    td { title = "Disk serial";+diskSerial }
+                                                    td { title = "Disk size in GB";+diskSizeGB }
                                                 }
                                             }
                                         }
@@ -494,21 +531,21 @@ a:hover {
 
                             div("panel") {
                                 h2 {
-                                    title="Docker environment metrics"
+                                    title = "Docker environment metrics"
                                     +"Docker Environment"
                                 }
                                 table {
                                     tr {
-                                        th { title="Item name";+"Item"}
-                                        th { title="Value of the item";+"Value"}
+                                        th { title = "Item name";+"Item" }
+                                        th { title = "Value of the item";+"Value" }
                                     }
                                     tr {
-                                        td {title="Container HOSTNAME";+"Container HOSTNAME"}
-                                        td {title="Container hostname value";+containerId}
+                                        td { title = "Container HOSTNAME";+"Container HOSTNAME" }
+                                        td { title = "Container hostname value";+containerId }
                                     }
                                     tr {
-                                        td {title="CGroup Memory Limit";+"CGroup Memory Limit"}
-                                        td {title="CGroup memory limit in GB";+dockerMemLimit}
+                                        td { title = "CGroup Memory Limit";+"CGroup Memory Limit" }
+                                        td { title = "CGroup memory limit in GB";+dockerMemLimit }
                                     }
                                 }
                             }
@@ -638,15 +675,15 @@ if(memC){
     }
 }
 
-private fun coreRows(coreLoads: List<Double>): List<Pair<String,String>> {
+private fun coreRows(coreLoads: List<Double>): List<Pair<String, String>> {
     return if (coreLoads.isEmpty()) {
         List(3) { "N/A" to "N/A" }
     } else {
         if (coreLoads.size < 3) {
-            coreLoads.mapIndexed { i,l -> "Core $i" to (if(l.isNaN()) "N/A" else "%.2f%%".format(l)) } +
+            coreLoads.mapIndexed { i, l -> "Core $i" to (if (l.isNaN()) "N/A" else "%.2f%%".format(l)) } +
                     List(3 - coreLoads.size) { "N/A" to "N/A" }
         } else {
-            coreLoads.mapIndexed { i,l -> "Core $i" to (if(l.isNaN()) "N/A" else "%.2f%%".format(l)) }
+            coreLoads.mapIndexed { i, l -> "Core $i" to (if (l.isNaN()) "N/A" else "%.2f%%".format(l)) }
         }
     }
 }
