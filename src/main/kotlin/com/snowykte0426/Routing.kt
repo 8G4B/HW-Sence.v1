@@ -39,10 +39,11 @@ fun Application.configureRouting() {
                 val maxFreqGhz = maxFreqHz / 1_000_000_000.0
                 val currentFreqsGhz = processor.currentFreq.map { it / 1_000_000_000.0 }
                 val diskStores = hardware.diskStores
-
                 val developerName = "snowykte0426"
+                val developerUrl = "https://www.github.com/snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
-                val qrCodeUrl = "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
+                val qrCodeUrl =
+                    "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
 
                 call.respondHtml {
                     head {
@@ -115,6 +116,16 @@ fun Application.configureRouting() {
 
                         footer .qr-container {
                             margin-top: 10px;
+                        }
+
+                        /* 링크 스타일 */
+                        a {
+                            color: inherit; /* 본문 색상과 동일하게 */
+                            text-decoration: none; /* 밑줄 제거 */
+                        }
+
+                        a:hover {
+                            text-decoration: underline; /* 마우스 오버 시 밑줄 */
                         }
 
                         .refresh-container {
@@ -262,14 +273,17 @@ fun Application.configureRouting() {
 
                         footer {
                             p {
-                                +"Developed by $developerName"
+                                +"Developed by "
+                                a(href = developerUrl, target = "_blank") {
+                                    +developerName
+                                }
                             }
                             p {
                                 +"GitHub Repository:"
                             }
                             div("qr-container") {
                                 img(src = qrCodeUrl, alt = "QR Code for Repository") {
-                                    style = "width: 150px; height: 150px;"
+                                    style = "width: 120px; height: 120px;" // 사이즈 조정
                                 }
                             }
                             p {
