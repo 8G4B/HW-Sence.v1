@@ -1,4 +1,4 @@
-package com.example
+package com.snowykte0426
 
 import io.ktor.server.application.*
 import io.ktor.server.html.*
