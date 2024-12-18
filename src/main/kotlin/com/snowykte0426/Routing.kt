@@ -39,17 +39,28 @@ fun Application.configureRouting() {
                 val maxFreqGhz = maxFreqHz / 1_000_000_000.0
                 val currentFreqsGhz = processor.currentFreq.map { it / 1_000_000_000.0 }
                 val diskStores = hardware.diskStores
+
                 val developerName = "snowykte0426"
                 val developerUrl = "https://www.github.com/snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
-                val qrCodeUrl =
-                    "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
+                val qrCodeUrl = "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
 
                 call.respondHtml {
                     head {
                         title("HW-Sence | System Status")
                         style {
                             +"""
+                        @keyframes fadeInUp {
+                            0% {
+                                opacity: 0;
+                                transform: translateY(20px);
+                            }
+                            100% {
+                                opacity: 1;
+                                transform: translateY(0);
+                            }
+                        }
+
                         body {
                             font-family: Arial, sans-serif;
                             margin: 20px;
@@ -57,11 +68,33 @@ fun Application.configureRouting() {
                             display: flex;
                             flex-direction: column;
                             min-height: 100vh;
+                            opacity: 0;
+                            animation: fadeInUp 1s ease forwards;
                         }
 
-                        h1, h2 {
-                            color: #333;
-                            text-align: center;
+                        h1, h2, h3, table, canvas, footer, .refresh-container {
+                            opacity: 0;
+                            animation: fadeInUp 0.8s ease forwards;
+                        }
+
+                        /* 순차적 애니메이션을 위해 딜레이 적용 */
+                        h1 {
+                            animation-delay: 0.2s;
+                        }
+                        h2 {
+                            animation-delay: 0.4s;
+                        }
+                        .refresh-container {
+                            animation-delay: 0.4s;
+                        }
+                        table {
+                            animation-delay: 0.6s;
+                        }
+                        canvas {
+                            animation-delay: 0.8s;
+                        }
+                        footer {
+                            animation-delay: 1.0s;
                         }
 
                         canvas {
@@ -102,6 +135,7 @@ fun Application.configureRouting() {
                             font-weight: 500;
                             margin: 30px 0 10px 0;
                             color: #555;
+                            animation-delay: 0.5s;
                         }
 
                         footer {
@@ -118,14 +152,13 @@ fun Application.configureRouting() {
                             margin-top: 10px;
                         }
 
-                        /* 링크 스타일 */
                         a {
-                            color: inherit; /* 본문 색상과 동일하게 */
-                            text-decoration: none; /* 밑줄 제거 */
+                            color: inherit;
+                            text-decoration: none;
                         }
 
                         a:hover {
-                            text-decoration: underline; /* 마우스 오버 시 밑줄 */
+                            text-decoration: underline;
                         }
 
                         .refresh-container {
@@ -283,7 +316,7 @@ fun Application.configureRouting() {
                             }
                             div("qr-container") {
                                 img(src = qrCodeUrl, alt = "QR Code for Repository") {
-                                    style = "width: 120px; height: 120px;" // 사이즈 조정
+                                    style = "width: 120px; height: 120px;"
                                 }
                             }
                             p {
