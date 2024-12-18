@@ -39,6 +39,12 @@ fun Application.configureRouting() {
                 val maxFreqGhz = maxFreqHz / 1_000_000_000.0
                 val currentFreqsGhz = processor.currentFreq.map { it / 1_000_000_000.0 }
                 val diskStores = hardware.diskStores
+
+                // 개발자 정보 및 Repo URL
+                val developerName = "Your Name"
+                val repoUrl = "https://github.com/8G4B/HW-Sence"
+                val qrCodeUrl = "https://github.com/8G4B/HW-Sence/blob/main/src/main/resources/static/image/repo_qr.png"
+
                 call.respondHtml {
                     head {
                         title("HW-Sence | System Status")
@@ -48,6 +54,9 @@ fun Application.configureRouting() {
                             font-family: Arial, sans-serif;
                             margin: 20px;
                             background-color: #f9f9f9;
+                            display: flex;
+                            flex-direction: column;
+                            min-height: 100vh;
                         }
 
                         h1, h2 {
@@ -65,21 +74,48 @@ fun Application.configureRouting() {
                             width: 60%;
                             margin: 20px auto;
                             border-collapse: collapse;
+                            background-color: #fff;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                            border-radius: 5px;
+                            overflow: hidden;
                         }
 
                         th, td {
-                            border: 1px solid #ddd;
+                            border-bottom: 1px solid #eee;
                             padding: 10px;
                             text-align: center;
+                            font-size: 14px;
                         }
 
                         th {
                             background-color: #4CAF50;
                             color: white;
+                            font-weight: 600;
+                        }
+
+                        tr:hover {
+                            background-color: #f7f7f7;
                         }
 
                         h3 {
                             text-align: center;
+                            font-weight: 500;
+                            margin: 30px 0 10px 0;
+                            color: #555;
+                        }
+
+                        footer {
+                            margin-top: auto;
+                            text-align: center;
+                            padding: 20px;
+                            font-size: 14px;
+                            color: #555;
+                            background-color: #f0f2f5;
+                            border-top: 1px solid #ddd;
+                        }
+
+                        footer .qr-container {
+                            margin-top: 10px;
                         }
                         """
                         }
@@ -193,6 +229,25 @@ fun Application.configureRouting() {
                                     td { +disk.model }
                                     td { +(disk.serial ?: "") }
                                     td { +"%.2f".format(disk.size / (1024.0 * 1024.0 * 1024.0)) }
+                                }
+                            }
+                        }
+
+                        footer {
+                            p {
+                                +"Developed by $developerName"
+                            }
+                            p {
+                                +"GitHub Repository:"
+                            }
+                            div("qr-container") {
+                                img(src = qrCodeUrl, alt = "QR Code for Repository") {
+                                    style = "width: 150px; height: 150px;"
+                                }
+                            }
+                            p {
+                                a(href = repoUrl, target = "_blank") {
+                                    +repoUrl
                                 }
                             }
                         }
