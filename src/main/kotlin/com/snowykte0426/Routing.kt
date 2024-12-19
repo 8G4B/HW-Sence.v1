@@ -54,7 +54,7 @@ fun Application.configureRouting() {
                 val devName = "snowykte0426"
                 val devUrl = "https://www.github.com/snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
-                val releasesUrl = "https://github.com/8G4B/HW-Sence.v1/releases/tag/v1.1.2"
+                val releasesUrl = "https://github.com/8G4B/HW-Sence.v1/releases/tag/v1.1.3"
                 val qrUrl =
                     "https://raw.githubusercontent.com/8G4B/HW-Sence/main/src/main/resources/static/image/repo_qr.png"
                 val now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
@@ -288,7 +288,7 @@ a:hover {
                         h1 { +"HW-Sence" }
                         h3 {
                             a(href = releasesUrl, target = "_blank") {
-                                +"v1.1.2"
+                                +"v1.1.3"
                             }
                         }
                         p("now-time") {
