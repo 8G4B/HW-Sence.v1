@@ -18,22 +18,18 @@ fun Application.configureRouting() {
                 val si = SystemInfo()
                 val hw = si.hardware
                 val p = hw.processor
-
                 val prevTicks = p.systemCpuLoadTicks
                 Thread.sleep(1000)
                 val rawCpuLoad = p.getSystemCpuLoadBetweenTicks(prevTicks)
                 val cpuLoad = if (rawCpuLoad.isNaN()) Double.NaN else rawCpuLoad * 100.0
-
                 val mem = hw.memory
                 val memUsed = mem.total - mem.available
                 val memPercent = if (mem.total > 0) (memUsed.toDouble() / mem.total) * 100.0 else Double.NaN
-
                 val prevProcTicks = p.processorCpuLoadTicks
                 Thread.sleep(1000)
                 val coreLoadValues = p.getProcessorCpuLoadBetweenTicks(prevProcTicks)
                 val coreLoads =
                     if (coreLoadValues.any { it.isNaN() }) emptyList<Double>() else coreLoadValues.map { it * 100 }
-
                 val os = si.operatingSystem
                 val pc = 5
                 val processes = os.processes
@@ -44,28 +40,19 @@ fun Application.configureRouting() {
                 val pv = topMemProcesses.map { it.second.toDouble() / (1024 * 1024) }
                 val pnJson = pn.joinToString(prefix = "[", postfix = "]") { "\"$it\"" }
                 val pvJson = pv.joinToString(prefix = "[", postfix = "]")
-
                 val s = hw.sensors
-                val t = if (s.cpuTemperature.isNaN()) Double.NaN else s.cpuTemperature
-                val v = if (s.cpuVoltage.isNaN()) Double.NaN else s.cpuVoltage
+                val t = if (s.cpuTemperature.isNaN()) Double.NaN else if (s.cpuTemperature > 20) s.cpuTemperature else "N/A"
+                val v = if (s.cpuVoltage.isNaN()) Double.NaN else if(s.cpuVoltage > 1) s.cpuVoltage else "N/A"
                 val maxHz = p.maxFreq
                 val maxGhz = if (maxHz > 0) maxHz / 1_000_000_000.0 else Double.NaN
                 val freqs = p.currentFreq
                 val coreFreqGhz =
                     if (freqs.isEmpty()) emptyList<Double>() else freqs.map { if (it > 0) it / 1_000_000_000.0 else Double.NaN }
-
                 val upSec = os.systemUptime.toLong()
                 val upH = upSec / 3600
                 val upM = (upSec % 3600) / 60
                 val upStr = if (upSec > 0) "${upH}h ${upM}m" else "N/A"
-
-                val la = p.getSystemLoadAverage(3)
-                val l1 = la.getOrElse(0) { Double.NaN }
-                val l5 = la.getOrElse(1) { Double.NaN }
-                val l15 = la.getOrElse(2) { Double.NaN }
-
                 val disks = hw.diskStores
-
                 val devName = "snowykte0426"
                 val devUrl = "https://www.github.com/snowykte0426"
                 val repoUrl = "https://github.com/8G4B/HW-Sence"
@@ -261,7 +248,7 @@ h2 { animation-delay:0.4s;color:#000 !important; }
 canvas { animation-delay:0.8s; }
 footer {
     animation-delay:1.0s;
-    margin-top:auto;
+    margin-top:8vh;
     text-align:center;
     padding:20px;
     font-size:14px;
@@ -409,7 +396,7 @@ a:hover {
                                         td { title = "CPU Temperature";+"CPU Temperature" }
                                         td {
                                             title =
-                                                "Current CPU temperature in °C";+if (t.isNaN()) "N/A" else "%.2f °C".format(
+                                                "Current CPU temperature in °C";+if (t == "N/A") "N/A" else "%.2f °C".format(
                                             t
                                         )
                                         }
@@ -417,7 +404,7 @@ a:hover {
                                     tr {
                                         td { title = "CPU Voltage";+"CPU Voltage" }
                                         td {
-                                            title = "Current CPU voltage";+if (v.isNaN()) "N/A" else "%.2f V".format(v)
+                                            title = "Current CPU voltage";+if (v == "N/A") "N/A" else "%.2f V".format(v)
                                         }
                                     }
                                     tr {
@@ -450,17 +437,6 @@ a:hover {
                                     tr {
                                         td { title = "System uptime";+"System Uptime" }
                                         td { title = "Uptime in hours and minutes";+upStr }
-                                    }
-                                    tr {
-                                        td { title = "Load average";+"Load Average (1/5/15min)" }
-                                        td {
-                                            title = "System load average over 1,5,15 minutes"
-                                            if (l1.isNaN() && l5.isNaN() && l15.isNaN()) {
-                                                +"N/A"
-                                            } else {
-                                                +"${if (l1.isNaN()) "N/A" else l1.roundToInt()} / ${if (l5.isNaN()) "N/A" else l5.roundToInt()} / ${if (l15.isNaN()) "N/A" else l15.roundToInt()}"
-                                            }
-                                        }
                                     }
                                 }
                             }
