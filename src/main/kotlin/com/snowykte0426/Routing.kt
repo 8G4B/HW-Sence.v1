@@ -9,8 +9,6 @@ import java.io.File
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
-
 fun Application.configureRouting() {
     routing {
         route("/hw-sence") {
@@ -87,6 +85,7 @@ fun Application.configureRouting() {
                 call.respondHtml {
                     head {
                         title("HW-Sence | System Status")
+                        link(rel = "icon", type = "image/png", href = "/static/image/favicon.png")
                         style {
                             +"""
 @keyframes fadeInUp{0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
