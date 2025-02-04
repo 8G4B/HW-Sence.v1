@@ -7,8 +7,8 @@ import kotlinx.html.*
 fun HTML.generateHtmlPage(status: SystemStatus) {
     head {
         title("HW-Sence | System Status")
-        link(rel = "icon", type = "image/png", href = "/static/image/favicon.ico")
-        link(rel = "stylesheet", href = "/static/css/styles.css")
+        link(rel = "icon", type = "image/png", href = "/hw-sence/status/static/image/favicon.ico")
+        link(rel = "stylesheet", href = "/hw-sence/status/static/css/styles.css")
         script(src = "https://cdn.jsdelivr.net/npm/chart.js") {}
     }
     body {
@@ -266,7 +266,7 @@ fun FlowContent.renderDockerInfoPanel(status: SystemStatus) {
 }
 
 fun FlowContent.renderScripts() {
-    script(src = "/static/js/main.js") {}
+    script(src = "/hw-sence/status/static/js/main.js") {}
 }
 
 fun FlowContent.renderFooter() {
@@ -277,7 +277,7 @@ fun FlowContent.renderFooter() {
         }
         p { +"GitHub Repository:" }
         div("qr-container") {
-            img(src = "/static/image/repo_qr.png", alt = "QR Code for Repository") {
+            img(src = "/hw-sence/status/static/image/repo_qr.png", alt = "QR Code for Repository") {
                 style = "width:120px;height:120px;"
             }
         }
