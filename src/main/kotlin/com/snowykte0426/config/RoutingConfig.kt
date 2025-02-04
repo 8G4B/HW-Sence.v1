@@ -9,7 +9,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        staticResources("/hw-sence/status/static", "static")
+        staticResources("/static", "static")
         route("") {
             get("") {
                 val status = fetchSystemStatus()
