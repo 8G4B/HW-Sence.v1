@@ -1,0 +1,278 @@
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@font-face {
+    font-family: SUIT-Variable;
+    src: url('/fonts/SUIT-Variable.woff2') format("woff2");
+    font-size: medium;
+    font-style: normal;
+}
+
+body {
+    font-family: SUIT-Variable, sans-serif;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    animation: fadeInUp 1s ease forwards;
+    opacity: 0;
+    color: #000 !important;
+    padding: 20px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.refresh-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    gap: 10px;
+}
+
+.last-updated {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+    padding-bottom: 20px;
+    color: #666;
+}
+
+.os-info {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+    padding-bottom: 20px;
+    color: #666;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    align-items: start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.panel {
+    background: #fff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 20px;
+    color: #000 !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    color: #000 !important;
+    font-size: 32px;
+}
+
+h3 {
+    margin-top: 0;
+    color: #000 !important;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 18px;
+    text-align: center;
+    color: #000 !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    table-layout: auto;
+    max-width: 100%;
+}
+
+th, td {
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    white-space: normal;
+    color: #000 !important;
+    box-sizing: border-box;
+}
+
+th {
+    background: #4CAF50 !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+tr:hover {
+    background: #f7f7f7 !important;
+}
+
+canvas {
+    max-width: 200px;
+    margin: 20px auto;
+    display: block;
+    width: auto;
+    height: auto;
+    box-sizing: border-box;
+}
+
+.disk-scroll-wrapper {
+    overflow-x: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dark-mode {
+    background: #222;
+    color: #eee !important;
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode p,
+.dark-mode a,
+.dark-mode .last-updated {
+    color: #eee !important;
+}
+
+.dark-mode .panel {
+    background: #333 !important;
+    color: #eee !important;
+}
+
+.dark-mode table {
+    background: #444 !important;
+}
+
+.dark-mode table th {
+    background: #4CAF50 !important;
+    color: #fff !important;
+}
+
+.dark-mode table td,
+.dark-mode table th {
+    color: #eee !important;
+}
+
+.dark-mode tr:hover {
+    background: #555 !important;
+}
+
+.dark-mode .refresh-button,
+.dark-mode .dark-mode-button {
+    background: #4CAF50 !important;
+    color: #fff !important;
+}
+
+.dark-mode footer {
+    background: #333;
+    border-top: 1px solid #555;
+    color: #eee !important;
+}
+
+.dark-mode #memUsageDetails {
+    color: #eee !important;
+}
+
+h1, h2, h3, table, canvas, footer, .refresh-container, .last-updated {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.refresh-container {
+    animation-delay: 0.4s;
+}
+
+h1 {
+    animation-delay: 0.2s;
+}
+
+h3 {
+    animation-delay: 0.25s;
+}
+
+.last-updated {
+    animation-delay: 0.3s;
+}
+
+h2 {
+    animation-delay: 0.4s;
+}
+
+canvas {
+    animation-delay: 0.8s;
+}
+
+footer {
+    animation-delay: 1.0s;
+    margin-top: 8vh;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    background: #f0f2f5;
+    border-top: 1px solid #ddd;
+    color: #555 !important;
+}
+
+.refresh-button,
+.dark-mode-button {
+    background: #4CAF50 !important;
+    color: #fff !important;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+.refresh-button:hover,
+.dark-mode-button:hover {
+    background: #45a049 !important;
+}
+
+footer .qr-container {
+    margin-top: 10px;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+#memUsageDetails {
+    text-align: center;
+    font-size: 16px;
+    margin-top: -10px;
+    color: #333;
+}
