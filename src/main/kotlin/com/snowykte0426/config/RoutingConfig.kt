@@ -9,15 +9,13 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
+        staticResources("/static", "static")
         route("/hw-sence") {
             get("/status") {
                 val status = fetchSystemStatus()
                 call.respondHtml {
                     generateHtmlPage(status)
                 }
-            }
-            route("/status") {
-                staticResources("/static", "static")
             }
         }
     }

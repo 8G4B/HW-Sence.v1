@@ -11,7 +11,4 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     configureRouting()
-    routing {
-        staticResources("/static", "static")
-    }
 }
