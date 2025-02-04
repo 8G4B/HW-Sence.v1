@@ -9,11 +9,8 @@ import com.snowykte0426.ui.generateHtmlPage
 
 fun Application.configureRouting() {
     routing {
-        static("/static") {
-            resources("static")
-        }
-
         route("/hw-sence") {
+            staticResources("/static", "static")
             get("/status") {
                 val status = fetchSystemStatus()
                 call.respondHtml {
