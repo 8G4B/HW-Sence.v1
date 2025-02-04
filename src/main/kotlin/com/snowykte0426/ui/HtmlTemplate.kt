@@ -22,7 +22,7 @@ fun HTML.generateHtmlPage(status: SystemStatus) {
 fun FlowContent.renderHeader(status: SystemStatus) {
     h1 { +"HW-Sence" }
     h3 {
-        a(href = "https://github.com/8G4B/HW-Sence.v1/releases/tag/v1.1.3", target = "_blank") { +"v1.1.3" }
+        a(href = "https://github.com/8G4B/HW-Sence.v1/releases/tag/v1.2.2", target = "_blank") { +"v1.1.3" }
     }
     p("now-time") {
         style = "text-align:center; margin-bottom:20px;"
